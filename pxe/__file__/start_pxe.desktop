@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=StartPXE
+Name[ru]=StratPXE
+Type=Application
+NoDisplay=false
+Exec=/usr/local/bin/StartPXE.py
+Icon=~/.local/share/icons/qemu_start.png
+Icon[ru]=~/.local/share/icons/qemu_start.png
+Hidden=false
+Terminal=false
+StartupNotify=false

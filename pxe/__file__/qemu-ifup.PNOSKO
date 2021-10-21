@@ -1,0 +1,10 @@
+#!/bin/sh
+bridge=pxe
+
+echo "Executing /etc/qemu-ifup"
+echo "Bringing up $1 for bridged mode..."
+sudo /sbin/ifconfig $1 0.0.0.0 promisc up
+echo "Adding $1 to $bridge..."
+sudo /sbin/brctl addif $bridge $1
+sleep 2
+

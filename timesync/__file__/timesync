@@ -1,0 +1,8 @@
+# /etc/cron.d/tymesync: запуск скрипта синхронизации /usr/local/bin/time_sync_client.sh 
+# каждые 30 минут с задержкой в диапазоне от 1 секунды до 240 секунд (4 минуты)
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+*/$TIME * * * *	root	sleep $(shuf -i 1-240 -n 1); time_sync_client.sh
+@reboot		root	time_sync_client.sh

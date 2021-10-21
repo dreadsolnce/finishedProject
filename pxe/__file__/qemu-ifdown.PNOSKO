@@ -1,0 +1,10 @@
+#!/bin/sh
+bridge=pxe
+
+echo "Executing /etc/qemu-ifdown.PNOSKO"
+echo "Bringing up $1 for bridged mode..."
+echo "Deleting $1 to $bridge..."
+ip link delete $1 master $bridge
+ip link delete $bridge
+# sleep 2
+
