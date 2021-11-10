@@ -1,0 +1,210 @@
+#!/bin/bash
+
+    # ОБЩИЕ ПЕРЕМЕННЫЕ
+
+file1=$HOME"/.bginfo/bg1.tmp"
+file2=$HOME"/.bginfo/bg2.tmp"
+file3=$HOME"/.bginfo/bg3.tmp"
+file4=$HOME"/.bginfo/bg4.tmp"
+file5=$HOME"/.bginfo/bg5.tmp"
+file6=$HOME"/.bginfo/bg6.tmp"
+file7=$HOME"/.bginfo/bg7.tmp"
+
+# Размер рамки вывода информации по горизонтали (во весь экран "нулевой экран")
+x_frame=$(echo -e "`xrandr --listactivemonitors | grep 0: | awk '{print $3}' | awk -Fx '{print $1}' | awk -F/ '{print $1}'`" | tr -d '[:space:]')
+
+# Общая переменная максимального отступа от правой границы экрана.
+max_x_frame=0
+
+# Если нет папки создаем ее.
+if ! [ -d $HOME"/.bginfo" ]; then mkdir $HOME"/.bginfo"; fi
+
+    # ОТОБРАЖЕНИЕ ИНФОРМАЦИИ ИЗ ФАЙЛА 1
+
+echo "Имя компьютера:" `uname -n` > $file1
+echo "Имя пользователя:" `logname` >> $file1
+
+# Размер шрифта для файла file1
+ch_f1=24
+
+# Колличество строк в файле file1
+sum_str_f1=$(wc -l ${file1} |awk '{print $1}') # Колличество строк в файле file1
+
+# Размер рамки вывода информации по вертикали из файла file1
+y_frame_f1=$((sum_str_f1*ch_f1))
+
+# Длина наибольшей строки (колличество символов) в файле file1.
+max_length_f1=$(wc -L ${file1} | awk '{print $1}')
+
+# Отступ от правой границы экрана лдя файла file1
+x_f1=$((x_frame-max_length_f1*17))
+max_x_frame=$x_f1
+
+# Цвет шрифта в зависимости от пользователя
+if [ $(groups `logname` | grep "root\|astra-admin" >/dev/null ; echo $?) == 0 ]; then color_f1="green" ; else color_f1="yellow"; fi
+
+#root-tail -g ${x_frame}x${y_frame}+${x}+${y} --update --minspace -font -*-fixed-*-*-*-*-${ch}-*-*-*-*-*-*-* /tmp/bginfo-1.tmp,$color
+#root-tail -g ${x_frame}x${y_frame}+${x}+${y} -fn -\*-fixed-medium-r-normal-\*-$ch-200-75-75-\*-100-koi8-r /tmp/bginfo-1.tmp,$color
+#oot-tail -g ${x_frame}x${y_frame}+${x}+${y} -fn -*-courier-bold-r-normal-*-20-140-100-100-*-110-* /tmp/bginfo-1.tmp,$color
+
+
+    # ОТОБРАЖЕНИЕ ИНФОРМАЦИИ ИЗ ФАЙЛА 2
+
+#if [ $(groups `logname` | grep "root\|astra-admin" >/dev/null ; echo $?) == 0 ]; then echo "Права: Администратор системы" > $file2 ; else echo "Права: Пользователь системы" > $file2; fi
+if [ $(groups `logname` | grep "root\|astra-admin" >/dev/null ; echo $?) == 0 ]; then echo "Права: Администратор системы" > $file2 ; else echo "Права: Пользователь системы" > $file2; fi
+
+# Размер шрифта для файла file2
+ch_f2=14
+
+# Колличество строк в файле file2
+sum_str_f2=$(wc -l ${file2} |awk '{print $1}') # Колличество строк в файле file2
+
+# Размер рамки вывода информации по вертикали из файла file2
+y_frame_f2=$((sum_str_f2*ch_f2))
+
+# Длина наибольшей строки (колличество символов) в файле file2.
+max_length_f2=$(wc -L ${file2} | awk '{print $1}')
+
+# Отступ от правой границы экрана лдя файла file2
+x_f2=$((x_frame-max_length_f2*9))
+
+    # ОТОБРАЖЕНИЕ ИНФОРМАЦИИ ИЗ ФАЙЛА 3
+
+/sbin/ifconfig eth0 | grep -w inet > /dev/null 
+if [ $? == 0 ]
+    then 
+	echo "IP адрес eth0:" `/sbin/ifconfig eth0 | grep -w inet | awk '{print $2}'` "/" `/sbin/ifconfig eth0 | grep -w inet | awk '{print $4}'` > $file3
+    else
+	echo "IP адрес eth0: Нет подключения!" > $file3
+fi
+/sbin/ifconfig eth1 | grep -w inet > /dev/null 
+if [ $? == 0 ]
+    then 
+	echo "IP адрес eth1:" `/sbin/ifconfig eth1 | grep -w inet | awk '{print $2}'` "/" `/sbin/ifconfig eth1 | grep -w inet | awk '{print $4}'` >> $file3
+    else
+	echo "IP адрес eth1: Нет подключения!" >> $file3
+fi
+
+# Размер шрифта для файла file3
+ch_f3=18
+# Колличество строк в файле file3
+sum_str_f3=$(wc -l ${file3} |awk '{print $1}') # Колличество строк в файле file3
+# Размер рамки вывода информации по вертикали из файла file3
+y_frame_f3=$((sum_str_f3*ch_f3))
+# Длина наибольшей строки (колличество символов) в файле file3.
+max_length_f3=$(wc -L ${file3} | awk '{print $1}')
+# Отступ от правой границы экрана лдя файла file3
+x_f3=$((x_frame-max_length_f3*12))
+
+    # ОТОБРАЖЕНИЕ ИНФОРМАЦИИ ИЗ ФАЙЛА 4
+
+# Если нет файла, значит обновления ОС не стоят.
+if ! [ -f "/etc/astra_update_version" ]; then upd_os="Обновления ОС не установлены!"; else upd_os=`cat /etc/astra_update_version | grep Bulletin | awk '{print $2}'`;fi
+echo $upd_os
+
+echo "Версия ОС: " `cat /etc/os-release | grep PRETTY_NAME | awk -F= '{print $2}'` > $file4
+echo "Обновления ОС: "$upd_os >> $file4
+echo "Версия ядра: " `uname -s -r -m` >> $file4
+
+# Размер шрифта для файла file4
+ch_f4=14
+
+# Колличество строк в файле file4
+sum_str_f4=$(wc -l ${file4} |awk '{print $1}') # Колличество строк в файле file4
+
+# Размер рамки вывода информации по вертикали из файла file4
+y_frame_f4=$((sum_str_f4*ch_f4))
+
+# Длина наибольшей строки (колличество символов) в файле file4.
+max_length_f4=$(wc -L ${file4} | awk '{print $1}')
+
+# Отступ от правой границы экрана лдя файла file4
+x_f4=$((x_frame-max_length_f4*9))
+
+    # ОТОБРАЖЕНИЕ ИНФОРМАЦИИ ИЗ ФАЙЛА 5
+
+echo "Процессор: " `cat /proc/cpuinfo |grep -w "model name" |awk '{print $4,$5,$6,$7,$8,$9,$10,$11,$12}' |head -1` > $file5
+
+# Размер шрифта для файла file5
+ch_f5=14
+
+# Колличество строк в файле file5
+sum_str_f5=$(wc -l ${file5} |awk '{print $1}') # Колличество строк в файле file5
+
+# Размер рамки вывода информации по вертикали из файла file5
+y_frame_f5=$((sum_str_f5*ch_f5))
+
+# Длина наибольшей строки (колличество символов) в файле file5.
+max_length_f5=$(wc -L ${file5} | awk '{print $1}')
+
+# Отступ от правой границы экрана лдя файла file5
+x_f5=$((x_frame-max_length_f5*9))
+
+    # ОТОБРАЖЕНИЕ ИНФОРМАЦИИ ИЗ ФАЙЛА 6
+
+memkb=$(cat /proc/meminfo | grep MemTotal | awk '{print $2}')
+memgb=$((memkb/1000/1000))
+swapkb=$(cat /proc/meminfo | grep SwapTotal | awk '{print $2}')
+swapgb=$((swapkb/1000/1000))
+echo "Оперативная память: " $memgb"Gb." "Файл подкачки SWAP: " $swapgb"Gb" >> $file6 > $file6
+
+#free --mega -h | sed 's/\([ \t]\+[^ \t]*\)\{3\}$//' > $file6
+
+# Размер шрифта для файла file6
+ch_f6=14
+
+# Колличество строк в файле file6
+sum_str_f6=$(wc -l ${file6} |awk '{print $1}') # Колличество строк в файле file6
+
+# Размер рамки вывода информации по вертикали из файла file6
+y_frame_f6=$((sum_str_f6*ch_f6))
+
+# Длина наибольшей строки (колличество символов) в файле file6.
+max_length_f6=$(wc -L ${file6} | awk '{print $1}')
+
+# Отступ от правой границы экрана лдя файла file6
+x_f6=$((x_frame-max_length_f6*9))
+
+
+    # ОТОБРАЖЕНИЕ ИНФОРМАЦИИ ИЗ ФАЙЛА 7
+
+
+#echo >$file7
+echo "   Модель          Диск  ТипФС  Смонтировано Серийный номер" >$file7
+echo "===========================================================" >>$file7
+#lsdinfo >>$file7
+lsblk -o MODEL,NAME,FSTYPE,MOUNTPOINT,SERIAL |egrep -v NAME >>$file7
+#echo >>$file7
+#echo "  Диск      Размер Используется Доступно" >>$file7
+#echo "=========================================" >>$file7
+# Смонтировано " >>$file7
+#df -h |grep /dev/ |egrep -v "udev|tmp" >>$file7
+#findmnt -o SOURCE,SIZE,USED,USE%,AVAIL |grep \/dev\/ |egrep -v "tmp|udev|pts|bfs|mque" >>$file7
+#findmnt -o SOURCE,SIZE,USED,USE%,AVAIL,TARGET |grep \/dev\/ |egrep -v "tmp|udev|pts|bfs|mque" >>$file7
+
+# Размер шрифта для файла file7
+ch_f7=14
+
+# Количество строк в файле file7
+sum_str_f7=$(wc -l ${file7} |awk '{print $1}')  # Колличество строк в файле file7
+
+# Размер рамки вывода информации по вертикали из файла file7
+y_frame_f7=$((sum_str_f7*ch_f7))
+
+# Длина наибольшей строки (колличество символов) в файле file7
+max_length_f7=$(wc -L ${file7} |awk '{print $1}')
+
+# Отступ от правой границы экрана лдя файла file7
+x_f7=$((x_frame-max_length_f7*9))
+
+
+if [ $x_f2 -lt $max_x_frame ]; then max_x_frame=$x_f2; fi
+if [ $x_f3 -lt $max_x_frame ]; then max_x_frame=$x_f3; fi
+if [ $x_f4 -lt $max_x_frame ]; then max_x_frame=$x_f4; fi
+if [ $x_f5 -lt $max_x_frame ]; then max_x_frame=$x_f5; fi
+if [ $x_f6 -lt $max_x_frame ]; then max_x_frame=$x_f6; fi
+if [ $x_f7 -lt $max_x_frame ]; then max_x_frame=$x_f7; fi
+
+max_y_frame=$((y_frame_f1+y_frame_f2+y_frame_f3+y_frame_f4+y_frame_f5+y_frame_f6+y_frame_f7+ch_f1))
+
+root-tail -g ${x_frame}x${max_y_frame}+${max_x_frame}+20 -fn -*-courier-bold-r-normal-*-$ch_f1-*-*-*-*-*-* $file1,$color_f1, -fn -*-courier-*-r-normal-*-$ch_f2-*-*-*-*-*-* $file2,LightGray, -fn -*-courier-bold-o-normal-*-$ch_f3-*-*-*-*-*-* $file3,$color_f1, -fn -*-courier-*-r-normal-*-$ch_f4-*-*-*-*-*-* $file4,LightGray, -fn -*-courier-*-r-normal-*-$ch_f5-*-*-*-*-*-* $file5,LightGray, -fn -*-courier-*-r-normal-*-$ch_f6-*-*-*-*-*-* $file6,LightGray, -fn -*-*-*-r-normal-*-$ch_f7-*-*-*-*-*-* $file7,LightGray,

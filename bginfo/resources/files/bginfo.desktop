@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=bginfo
+Name[ru]=bginfo
+Type=Application
+NoDisplay=false
+Comment=Ярлык для запуска скрипта, который запускает программу root-tail
+Comment[ru]=Ярлык для запуска скрипта, который запускает программу root-tail
+Exec=sh -c "sleep 10 && /usr/local/bin/bginfo.bg"
+Icon=basket
+Icon[ru]=basket
+Hidden=false
+Terminal=false
+StartupNotify=false
+Version=1.0.0
+Encoding=UTF-8
